@@ -17,6 +17,11 @@ module App
   # TODO: implement token based auth
   API_KEY = ENV["API_KEY"]? || abort "API_KEY env var not set"
 
+  INFLUX_HOST    = ENV["INFLUX_HOST"]? || abort "INFLUX_HOST env var not set"
+  INFLUX_API_KEY = ENV["INFLUX_API_KEY"]? || abort "INFLUX_API_KEY env var not set"
+  INFLUX_ORG     = ENV["INFLUX_ORG"]? || "place"
+  INFLUX_BUCKET  = ENV["INFLUX_BUCKET"]? || "analytics"
+
   def self.running_in_production?
     ENVIRONMENT == "production"
   end

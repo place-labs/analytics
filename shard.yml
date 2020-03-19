@@ -9,10 +9,8 @@ dependencies:
     github: spider-gazelle/active-model
   kilt:
     github: jeromegn/kilt
-
-development_dependencies:
-  ameba:
-    github: veelenga/ameba
+  flux:
+    github: place-labs/flux
 
 targets:
   app:

@@ -1,4 +1,5 @@
 require "uuid"
+require "action-controller"
 
 module PlaceOS::Analytics
   private abstract class Application < ActionController::Base

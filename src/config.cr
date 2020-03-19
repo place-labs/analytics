@@ -20,6 +20,7 @@ logger.level = App.running_in_production? ? Logger::INFO : Logger::DEBUG
 require "./controllers/application"
 require "./controllers/*"
 require "./models/*"
+require "./constants"
 
 # Server required after application controllers
 require "action-controller/server"
@@ -30,6 +31,16 @@ ActionController::Server.before(
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
+
+# InfluxDB connection
+require "flux"
+Flux.configure do |settings|
+  settings.host = App::INFLUX_HOST
+  settings.api_key = App::INFLUX_API_KEY
+  settings.org = App::INFLUX_ORG
+  settings.bucket = App::INFLUX_BUCKET
+  settings.logger = logger
+end
 
 # Optional support for serving of static assests
 if File.directory?(App::STATIC_FILE_PATH)
