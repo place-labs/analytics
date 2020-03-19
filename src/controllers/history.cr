@@ -19,10 +19,21 @@ module PlaceOS::Analytics
       end
 
       if value = History.lookup location, event, at: time
-        render json: {value: value}
+        render json: value
       else
         head :no_content
       end
+    end
+
+    # Provide a regular time series for a tracked param.
+    get "/location/:id/series/:event" do
+      location = params["id"]
+      event = params["event"]
+      start = Time::Format::RFC_3339.parse params["start"]
+      stop = Time::Format::RFC_3339.parse params["stop"]
+      interval = params["every"]
+
+      render json: [0.0, 1.0, 1.0, 1.0, 0.0]
     end
 
     # Lookup the value of a tracked param at a specified point in time. Returns
