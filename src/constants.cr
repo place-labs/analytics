@@ -1,5 +1,5 @@
 module App
-  NAME    = "Spider-Gazelle"
+  NAME    = "PlaceOS Analytics API"
   VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
 
   ENVIRONMENT = ENV["SG_ENV"]? || "development"

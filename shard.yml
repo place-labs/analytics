@@ -1,5 +1,5 @@
-name: spider-gazelle
-version: 1.0.0
+name: placeos-analytics
+version: 0.1.0
 
 dependencies:
   action-controller:
@@ -7,9 +7,6 @@ dependencies:
     version: "~> 2.0"
   active-model:
     github: spider-gazelle/active-model
-
-  # https://github.com/jeromegn/kilt
-  # Generic template interface for Crystal
   kilt:
     github: jeromegn/kilt
 
@@ -17,7 +14,6 @@ development_dependencies:
   ameba:
     github: veelenga/ameba
 
-# compile target
 targets:
   app:
     main: src/app.cr
