@@ -3,6 +3,7 @@ require "uuid"
 abstract class Application < ActionController::Base
   before_action :set_request_id
   before_action :set_date_header
+  before_action :authorize!
 
   # This makes it simple to match client requests with server side logs.
   # When building microservices this ID should be propagated to upstream services.
@@ -16,5 +17,9 @@ abstract class Application < ActionController::Base
 
   def set_date_header
     response.headers["Date"] = HTTP.format_time(Time.utc)
+  end
+
+  def authorize!
+    head :forbidden unless request.headers["X-Api-Key"]? == API_KEY
   end
 end
