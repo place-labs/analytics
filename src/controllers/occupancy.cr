@@ -5,7 +5,7 @@ module PlaceOS::Analytics
     base "/"
 
     {% for entity in [:organisation, :building, :level, :location] %}
-      get "/{{entity}}/:id/occupancy" do
+      get "/{{entity.id}}/:id/occupancy" do
         id = params["id"]
 
         start = params["start"]
