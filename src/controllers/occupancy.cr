@@ -8,12 +8,19 @@ module PlaceOS::Analytics
       org_id = params["id"]
       start  = Time::Format::RFC_3339.parse params["start"]
       stop   = Time::Format::RFC_3339.parse params["stop"]
+      every  = params["every"]?
 
-      locations = Occupancy.aggregate start, stop, filters: [
-        "(r) => r.org == \"#{org_id}\""
-      ]
-
-      render json: locations.values.sum / locations.size.to_f
+      if every
+        locations = Occupancy.series start, stop, every, filters: [
+          "(r) => r.org == \"#{org_id}\""
+        ]
+        render json: locations
+      else
+        locations = Occupancy.aggregate start, stop, filters: [
+          "(r) => r.org == \"#{org_id}\""
+        ]
+        render json: locations.values.sum / locations.size.to_f
+      end
     end
 
     # Calculates an aggregate occupancy for each location allowed by the filters
@@ -53,7 +60,36 @@ module PlaceOS::Analytics
       response.first.to_h
     end
 
-    def self.series
+    # Calculate a regular time series of occupancy levels with aggregations at
+    # the specified interval.
+    # TODO: implement stricter type for interval
+    def self.series(start : Time, stop : Time,  interval : String, filters = [] of String)
+      # FIXME: this will provide incorrect values when the source data is not a
+      # regular series.
+      query = <<-FLUX
+        from(bucket: "#{App::INFLUX_BUCKET}")
+          |> range(start: #{start.to_rfc3339}, stop: #{stop.to_rfc3339})
+          |> filter(fn: (r) => r._measurement == "presence")
+          #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
+          |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
+          |> group(columns: ["loc", "lvl", "bld", "org"])
+          |> aggregateWindow(fn: mean, every: #{interval}, column: "val", createEmpty: true)
+          |> yield(name: "location-occupancy-series")
+        FLUX
+
+      results = {} of String => Array(Float64?)
+
+      # FIXME: implement Flux.stream for a query that yields rows / tables as it
+      # goes.
+      Flux.query query do |row|
+        loc = row["loc"]
+        val = row["val"].to_f unless row["val"].empty?
+        results[loc] ||= [] of Float64?
+        results[loc] << val
+        nil
+      end
+
+      results
     end
   end
 end
