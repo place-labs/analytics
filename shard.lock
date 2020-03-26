@@ -1,0 +1,38 @@
+version: 1.0
+shards:
+  action-controller:
+    github: spider-gazelle/action-controller
+    version: 2.3.4
+
+  active-model:
+    github: spider-gazelle/active-model
+    version: 1.8.2
+
+  bisect:
+    github: spider-gazelle/bisect
+    version: 1.2.0
+
+  cron_parser:
+    github: kostya/cron_parser
+    version: 0.3.0
+
+  delimiter_tree:
+    github: drujensen/delimiter_tree
+    version: 0.1.4
+
+  flux:
+    github: place-labs/flux
+    version: 1.0.0
+
+  habitat:
+    github: luckyframework/habitat
+    version: 0.4.3
+
+  kilt:
+    github: jeromegn/kilt
+    version: 0.6.0
+
+  tasker:
+    github: spider-gazelle/tasker
+    commit: 5fc37acdd9a784ad2146f7f225689c407f2091b5
+
