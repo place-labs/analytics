@@ -27,20 +27,28 @@ module PlaceOS::Analytics
           "(r) => r.org == \"#{org_id}\""
         ]
         # FIXME: group location aggregates by types
-        render json: {
-          workstations: 0.0,
-          workpoints: 0.0,
-          informal: 0.0,
-          formal: 0.0,
-          social: 0.0,
-          unknown: locations.values.sum / locations.size.to_f
-        }
+        if locations.empty?
+          head :no_content
+        else
+          render json: {
+            workstations: 0.0,
+            workpoints: 0.0,
+            informal: 0.0,
+            formal: 0.0,
+            social: 0.0,
+            unknown: locations.values.sum / locations.size.to_f
+          }
+        end
 
       else
         locations = Query::Occupancy.aggregate start, stop, filters: [
           "(r) => r.org == \"#{org_id}\""
         ]
-        render json: locations.values.sum / locations.size.to_f
+        if locations.empty?
+          head :no_content
+        else
+          render json: locations.values.sum / locations.size.to_f
+        end
       end
     end
   end

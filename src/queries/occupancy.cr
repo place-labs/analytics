@@ -36,7 +36,12 @@ module PlaceOS::Analytics::Query
         {row["loc"], row["val"].to_f}
       end
 
-      response.first.to_h
+      if response.empty?
+        # No data in range
+        {} of String => Float64
+      else
+        response.first.to_h
+      end
     end
 
     # Calculate a regular time series of occupancy levels with aggregations at
