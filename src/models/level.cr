@@ -5,6 +5,7 @@ module PlaceOS::Analytics::Model
     def self.temp_data
       {
         "zone-y3qRLrZGVs" => {
+          id:           "zone-y3qRLrZGVs",
           name:         "Level 10",
           description:  "",
           organisation: "zone-xP3Z77ZH-Z",

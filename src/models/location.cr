@@ -5,6 +5,7 @@ module PlaceOS::Analytics::Model
     def self.temp_data
       {
         "foo" => {
+          id:           "foo",
           name:         "Foo",
           description:  "",
           organisation: "zone-xP3Z77ZH-Z",
@@ -16,6 +17,7 @@ module PlaceOS::Analytics::Model
           capacity:     6,
         },
         "bar" => {
+          id:           "bar",
           name:         "Bar",
           description:  "",
           organisation: "zone-xP3Z77ZH-Z",
@@ -27,6 +29,7 @@ module PlaceOS::Analytics::Model
           capacity:     4,
         },
         "baz" => {
+          id:           "baz",
           name:         "Baz",
           description:  "",
           organisation: "zone-xP3Z77ZH-Z",

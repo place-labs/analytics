@@ -5,6 +5,7 @@ module PlaceOS::Analytics::Model
     def self.temp_data
       {
         "zone-y3qHfB~QrH" => {
+          id:           "zone-y3qHfB~QrH",
           name:         "Barangaroo Tower 3",
           description:  "",
           organisation: "zone-xP3Z77ZH-Z",
