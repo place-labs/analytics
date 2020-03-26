@@ -15,10 +15,26 @@ module PlaceOS::Analytics
       if every
         head :bad_request if group
 
-        series = Query::Occupancy.series start, stop, every, filters: [
+        series_hash = Query::Occupancy.series start, stop, every, filters: [
           "(r) => r.org == \"#{org_id}\""
         ]
-        render json: series
+        head :no_content if series_hash.empty?
+        # Aggregate points for each location into a single series reflexting the
+        # mean of these.
+        merged_series = series_hash.values.reduce do |acc, i|
+          acc.zip(i).map do |a, b|
+            if a && b
+              (a + b) / 2.0
+            elsif a
+              a
+            elsif b
+              b
+            else
+              nil
+            end
+          end
+        end
+        render json: merged_series
 
       elsif group
         head :bad_request unless group == "type"
