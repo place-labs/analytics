@@ -14,56 +14,61 @@ module PlaceOS::Analytics
 
       if every
         head :bad_request if group
-
-        series_hash = Query::Occupancy.series start, stop, every, filters: [
+        location_series = Query::Occupancy.series start, stop, every, filters: [
           "(r) => r.org == \"#{org_id}\""
         ]
-        head :no_content if series_hash.empty?
-        # Aggregate points for each location into a single series reflexting the
-        # mean of these.
-        merged_series = series_hash.values.reduce do |acc, i|
-          acc.zip(i).map do |a, b|
-            if a && b
-              (a + b) / 2.0
-            elsif a
-              a
-            elsif b
-              b
-            else
-              nil
-            end
-          end
-        end
-        render json: merged_series
+        head :no_content if location_series.empty?
+        render json: Occupancy.aggregate(location_series)
 
       elsif group
         head :bad_request unless group == "type"
-
-        locations = Query::Occupancy.aggregate start, stop, filters: [
+        location_aggregates = Query::Occupancy.aggregate start, stop, filters: [
           "(r) => r.org == \"#{org_id}\""
         ]
-        # FIXME: group location aggregates by types
-        if locations.empty?
-          head :no_content
-        else
-          render json: {
-            workstations: 0.0,
-            workpoints: 0.0,
-            informal: 0.0,
-            formal: 0.0,
-            social: 0.0,
-            unknown: locations.values.sum / locations.size.to_f
-          }
-        end
+        head :no_content if location_aggregates.empty?
+        render json: Occupancy.aggregate_by(group, location_aggregates)
 
       else
-        locations = Query::Occupancy.aggregate start, stop, filters: [
+        location_aggregates = Query::Occupancy.aggregate start, stop, filters: [
           "(r) => r.org == \"#{org_id}\""
         ]
-        if locations.empty?
-          head :no_content
-        else
-          render json: locations.values.sum / locations.size.to_f
+        head :no_content if location_aggregates.empty?
+        render json: Occupancy.aggregate(location_aggregates)
+      end
+    end
+
+    # Aggregate a set of single values.
+    def self.aggregate(value_hash : Hash(String, Float64))
+      value_hash.values.sum / value_hash.size.to_f
+    end
+
+    # Aggegate a set of values by a location attribute
+    # FIXME: implement grouping based on location metadata
+    def self.aggregate_by(attr : String, value_hash : Hash(String, Float64))
+      {
+        workstations: 0.0,
+        workpoints: 0.0,
+        informal: 0.0,
+        formal: 0.0,
+        social: 0.0,
+        unknown: aggregate(value_hash)
+      }
+    end
+
+    # Aggregate a set of uniform series, producing a single series with each
+    # point representing the mean value of all components at that time.
+    def self.aggregate(value_hash : Hash(String, Array(Float64?)))
+      value_hash.values.reduce do |acc, i|
+        acc.zip(i).map do |a, b|
+          if a && b
+            (a + b) / 2.0
+          elsif a
+            a
+          elsif b
+            b
+          else
+            nil
+          end
         end
       end
     end
