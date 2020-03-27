@@ -2,6 +2,12 @@ require "./application"
 require "../queries/occupancy"
 
 module PlaceOS::Analytics
+  # Provides metrics based on location occupancy.
+  #
+  # Occupancy is an an indicator of human usage of locations. A location is
+  # considered occupied when a person is physically there and using it. A
+  # location which has had materials left (laptops, paper etc), but no person
+  # present is considered un-occupied.
   class Occupancy < Application
     base "/"
 
