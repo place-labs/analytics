@@ -14,7 +14,7 @@ module PlaceOS::Analytics
     base "/"
 
     {% for path, tag in { organisation: :org, building: :bld, level: :lvl } %}
-      get "/{{path.id}}/:id/occupancy" do
+      get "/{{path.id}}/:id/usage" do
         id    = params["id"]
         start = Time::Format::RFC_3339.parse params["start"]
         stop  = Time::Format::RFC_3339.parse params["stop"]
