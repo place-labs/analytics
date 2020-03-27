@@ -1,5 +1,5 @@
 doc
-lib
+/lib
 .crystal
 .shards
 app
