@@ -25,23 +25,35 @@ module PlaceOS::Analytics
           location_series = Query::Occupancy.series start, stop, every, filters: [
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
-          head :no_content if location_series.empty?
-          render json: Tools::Aggregate.mean_series(location_series)
+          if location_series.empty?
+            render json: [] of Float64?
+          else
+            render json: Tools::Aggregate.mean_series(location_series)
+          end
 
         elsif group
           head :bad_request unless group == "type"
           location_aggregates = Query::Occupancy.aggregate start, stop, filters: [
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
-          head :no_content if location_aggregates.empty?
-          render json: Tools::Aggregate.mean(location_aggregates, group_by: group)
+          if location_aggregates.empty?
+            render json: {} of String => Float64
+          else
+            render json: Tools::Aggregate.mean(location_aggregates, group_by: group)
+          end
 
         else
           location_aggregates = Query::Occupancy.aggregate start, stop, filters: [
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
-          head :no_content if location_aggregates.empty?
-          render json: Tools::Aggregate.mean(location_aggregates)
+          if location_aggregates.empty?
+            # FIXME: cannot currently render json: nil via action-controller
+            # render json: nil
+            response.headers["Content-Type"] = "application/json"
+            render text: "null"
+          else
+            render json: Tools::Aggregate.mean(location_aggregates)
+          end
         end
       end
     {% end %}
