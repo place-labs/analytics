@@ -9,7 +9,7 @@ module PlaceOS::Analytics::Query
         // Events of interest, grouped by location
         events = from(bucket: "#{App::INFLUX_BUCKET}")
           |> range(start: #{start.to_rfc3339}, stop: #{stop.to_rfc3339})
-          |> filter(fn: (r) => r._measurement == "sol")
+          |> filter(fn: (r) => r._measurement == "in_use" or r._measurement == "sol")
           #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
           |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
           |> group(columns: ["loc", "lvl", "bld", "org"])
@@ -53,7 +53,7 @@ module PlaceOS::Analytics::Query
       query = <<-FLUX
         from(bucket: "#{App::INFLUX_BUCKET}")
           |> range(start: #{start.to_rfc3339}, stop: #{stop.to_rfc3339})
-          |> filter(fn: (r) => r._measurement == "in_use")
+          |> filter(fn: (r) => r._measurement == "in_use" or r._measurement == "sol")
           #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
           |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
           |> group(columns: ["loc", "lvl", "bld", "org"])
