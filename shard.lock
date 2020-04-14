@@ -2,7 +2,7 @@ version: 1.0
 shards:
   action-controller:
     github: spider-gazelle/action-controller
-    version: 2.3.4
+    version: 2.4.0
 
   active-model:
     github: spider-gazelle/active-model
@@ -22,7 +22,7 @@ shards:
 
   flux:
     github: place-labs/flux
-    version: 1.0.1
+    commit: 095391d59c0dee9c9229f35cd0feadfcfe9f1e2a
 
   habitat:
     github: luckyframework/habitat
