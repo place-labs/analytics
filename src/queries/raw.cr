@@ -2,7 +2,6 @@ module PlaceOS::Analytics::Query
   module Raw
     extend self
 
-
     def state(location : String, event : String, at : Time, max_age = 3.days, filters = [] of String)
       # Offset time slightly to ensure that if querying low time-granularity
       # data (e.g. 9:30am observation) the correct observation is returned.
@@ -15,7 +14,7 @@ module PlaceOS::Analytics::Query
           |> filter(fn: (r) => r._measurement == "#{event}")
           |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
           |> filter(fn: (r) => r.loc == "#{location}")
-          #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
+          #{filters.join { |pred| "|> filter(fn: #{pred})" }}
           |> rename(columns: {"val": "_value"})
           |> last()
         FLUX

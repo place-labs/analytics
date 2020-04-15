@@ -14,11 +14,11 @@ module PlaceOS::Analytics
     def mean(value_hash : Hash(String, Float64), group_by attr : String)
       {
         workstations: 0.0,
-        workpoints: 0.0,
-        informal: 0.0,
-        formal: 0.0,
-        social: 0.0,
-        unknown: mean(value_hash)
+        workpoints:   0.0,
+        informal:     0.0,
+        formal:       0.0,
+        social:       0.0,
+        unknown:      mean(value_hash),
       }
     end
 

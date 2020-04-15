@@ -10,7 +10,7 @@ module PlaceOS::Analytics::Query
         events = from(bucket: "#{App::INFLUX_BUCKET}")
           |> range(start: #{start.to_rfc3339}, stop: #{stop.to_rfc3339})
           |> filter(fn: (r) => r._measurement == "presence")
-          #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
+          #{filters.join { |pred| "|> filter(fn: #{pred})" }}
           |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
           |> group(columns: ["loc", "lvl", "bld", "org"])
 
@@ -47,14 +47,14 @@ module PlaceOS::Analytics::Query
     # Calculate a regular time series of occupancy levels with aggregations at
     # the specified interval.
     # TODO: implement stricter type for interval
-    def series(start : Time, stop : Time,  interval : String, filters = [] of String)
+    def series(start : Time, stop : Time, interval : String, filters = [] of String)
       # FIXME: this will provide incorrect values when the source data is not a
       # regular series.
       query = <<-FLUX
         from(bucket: "#{App::INFLUX_BUCKET}")
           |> range(start: #{start.to_rfc3339}, stop: #{stop.to_rfc3339})
           |> filter(fn: (r) => r._measurement == "presence")
-          #{ filters.join { |pred| "|> filter(fn: #{pred})" } }
+          #{filters.join { |pred| "|> filter(fn: #{pred})" }}
           |> pivot(rowKey: ["_time", "lvl", "src"], columnKey: ["_field"], valueColumn: "_value")
           |> group(columns: ["loc", "lvl", "bld", "org"])
           |> aggregateWindow(fn: mean, every: #{interval}, column: "val", createEmpty: true)

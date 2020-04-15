@@ -12,7 +12,7 @@ module PlaceOS::Analytics
   class Occupancy < Application
     base "/"
 
-    {% for path, tag in { organisation: :org, building: :bld, level: :lvl } %}
+    {% for path, tag in {organisation: :org, building: :bld, level: :lvl} %}
       get "/{{path.id}}/:id/occupancy" do
         id    = params["id"]
         start = Time::Format::RFC_3339.parse params["start"]
