@@ -22,6 +22,12 @@ module PlaceOS::Analytics::Model
             "zone-~Vcwdome1Y",
             "zone-~Vd1qoDHT0",
           ],
+          extra: {
+            location: {
+              latitude:  -33.8650165,
+              longitude: 151.2019729,
+            },
+          },
         },
       }
     end
