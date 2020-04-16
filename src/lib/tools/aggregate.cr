@@ -4,22 +4,26 @@ module PlaceOS::Analytics
   module Tools::Aggregate
     extend self
 
+    def mean(values : Array(Float64))
+      compacted = values.compact
+      compacted.sum / compacted.size.to_f
+    end
+
     # Aggregate a set of single values.
     def mean(value_hash : Hash(String, Float64))
-      value_hash.values.sum / value_hash.size.to_f
+      mean value_hash.values
     end
 
     # Aggegate a set of values by a location attribute
-    # FIXME: implement grouping based on location metadata
     def mean(value_hash : Hash(String, Float64), group_by attr : String)
-      {
-        workstations: 0.0,
-        workpoints:   0.0,
-        informal:     0.0,
-        formal:       0.0,
-        social:       0.0,
-        unknown:      mean(value_hash),
-      }
+      values = {} of String => Float64
+      value_hash.each do |id, value|
+        location = Model::Location.find id
+        group = location ? location[attr].to_s : "unknown"
+        values[group] ||= 0.0
+        values[group] = (values[group] + value) / 2.0
+      end
+      values
     end
 
     # Aggregate a set of uniform series, producing a single series with each

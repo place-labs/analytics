@@ -32,7 +32,6 @@ module PlaceOS::Analytics
           end
 
         elsif group
-          head :bad_request unless group == "type"
           location_aggregates = Query::Occupancy.aggregate start, stop, filters: [
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
