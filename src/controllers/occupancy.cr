@@ -21,12 +21,13 @@ module PlaceOS::Analytics
         group = params["group_by"]?
 
         if every
-          head :bad_request if group
           location_series = Query::Occupancy.series start, stop, every, filters: [
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
           if location_series.empty?
             render json: [] of Float64?
+          elsif group
+            render json: Tools::Aggregate.mean_series(location_series, group_by: group)
           else
             render json: Tools::Aggregate.mean_series(location_series)
           end
