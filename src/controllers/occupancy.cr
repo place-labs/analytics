@@ -47,10 +47,7 @@ module PlaceOS::Analytics
             "(r) => r.{{tag.id}} == \"#{id}\""
           ]
           if location_aggregates.empty?
-            # FIXME: cannot currently render json: nil via action-controller
-            # render json: nil
-            response.headers["Content-Type"] = "application/json"
-            render text: "null"
+            render json: nil
           else
             render json: Tools::Aggregate.mean(location_aggregates)
           end
