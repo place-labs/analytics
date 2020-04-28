@@ -4,7 +4,10 @@ module PlaceOS::Analytics::Query
 
     # Calculates an aggregate occupancy for each location allowed by the filters
     # across the given time range.
-    def aggregate(start : Time, stop : Time, filters = [] of String)
+    def aggregate(start : Time, stop : Time, filters = [] of String, narrow = true)
+      time_span = Raw.event_window_total_seconds start, stop, filters if narrow
+      time_span ||= (stop - start).total_seconds
+
       query = <<-FLUX
         // Events of interest, grouped by location
         events = from(bucket: "#{App::INFLUX_BUCKET}")
@@ -25,7 +28,7 @@ module PlaceOS::Analytics::Query
           |> sort(columns: ["_time"])
           |> fill(column: "val", usePrevious: true)
           |> integral(unit: 1s, column: "val")
-          |> map(fn: (r) => ({r with val: r.val / #{(stop - start).total_seconds}}))
+          |> map(fn: (r) => ({r with val: r.val / #{time_span}}))
 
         locations
           |> group()
